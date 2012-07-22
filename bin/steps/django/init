@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-SETTINGS_FILE=$(find . -maxdepth 3 -type f -name 'settings.py' | head -1)
+SETTINGS_FILE=$(find . -maxdepth 4 -type f -name 'production.py' | head -1)
 PROJECT=$(dirname $SETTINGS_FILE)
-MANAGE_FILE=$(find . -maxdepth 3 -type f -name 'manage.py' | head -1)
+MANAGE_FILE=$(find . -maxdepth 2 -type f -name 'manage.py' | head -1)
 MANAGE_FILE=${MANAGE_FILE:2}
 
 if [ "$FRESH_APP" ]; then

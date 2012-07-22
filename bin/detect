@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This script serves as the
-# [**Python Buildpack**](https://github.com/heroku/heroku-buildpack-python)
+# [**Python Buildpack**](https://github.com/dirn/heroku-buildpack-python)
 # detector.
 #
 # A [buildpack](http://devcenter.heroku.com/articles/buildpacks) is an
@@ -15,18 +15,18 @@
 BUILD_DIR=$1
 
 # Exit early if app is clearly not Python.
-if [ ! -f $BUILD_DIR/requirements.txt ] && [ ! -f $BUILD_DIR/setup.py ]; then
+if [ ! -f $BUILD_DIR/requirements/base.txt ] && [ ! -f $BUILD_DIR/requirements/production.txt ] && [ ! -f $BUILD_DIR/setup.py ]; then
   exit 1
 fi
 
 # If only `setup.py`, assume that the app is not Django.
-if [ ! -f $BUILD_DIR/requirements.txt ]; then
+if [ ! -f $BUILD_DIR/requirements/base.txt ] && [ ! -f $BUILD_DIR/requirements/production.txt ]; then
   echo Python
   exit 0
 fi
 
-# `Python/Django` if `**/settings.py` is present and `django` exists in
-# `requirements.txt`.
+# `Python/Django` if `**/settings/production.py` is present and `django` exists in
+# `requirements/base.txt`.
 #
 # Otherwise, `Python`.
 
@@ -58,7 +58,7 @@ IFS_BAK=
 }
 
 
-SETTINGS_FILE=$(find $BUILD_DIR/. -maxdepth 2 -type f -name 'settings.py' | head -1)
+SETTINGS_FILE=$(find $BUILD_DIR/. -maxdepth 4 -type f -name 'production.py' | head -1)
 
 
-[ -n "$SETTINGS_FILE" ] && ( list_requirements $BUILD_DIR/requirements.txt | grep -Fiq "django" ) && echo Python/Django || echo Python
+[ -n "$SETTINGS_FILE" ] && ( list_requirements $BUILD_DIR/requirements/base.txt | grep -Fiq "django" ) && echo Python/Django || echo Python
